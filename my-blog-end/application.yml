@@ -1,0 +1,12 @@
+server:
+  port: 8081
+datasource:
+  driverName: mysql
+  host: 127.0.0.1
+  # host: host.docker.internal
+  port: 3306
+  database: myblog
+  username: root
+  # password: czl1121741X
+  password: student
+  charset: utf8

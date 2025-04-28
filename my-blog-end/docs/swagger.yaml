@@ -1,0 +1,392 @@
+definitions:
+  controller.ArticleVo:
+    properties:
+      ID:
+        type: integer
+      authId:
+        type: integer
+      authName:
+        type: string
+      content:
+        type: string
+      createdTime:
+        type: string
+      likeFlag:
+        type: boolean
+      likeNum:
+        type: integer
+      parentId:
+        type: integer
+      replyNum:
+        type: integer
+      title:
+        type: string
+    type: object
+  controller.PageParams:
+    properties:
+      page:
+        type: integer
+      pageSize:
+        type: integer
+    type: object
+  controller.PageResult-controller_ArticleVo:
+    properties:
+      all:
+        type: integer
+      content:
+        items:
+          $ref: '#/definitions/controller.ArticleVo'
+        type: array
+      page_num:
+        type: integer
+      page_size:
+        type: integer
+    type: object
+  controller.PageResult-controller_ReplyVo:
+    properties:
+      all:
+        type: integer
+      content:
+        items:
+          $ref: '#/definitions/controller.ReplyVo'
+        type: array
+      page_num:
+        type: integer
+      page_size:
+        type: integer
+    type: object
+  controller.QueryArticleBody:
+    properties:
+      descCreatedTime:
+        type: boolean
+      key:
+        type: string
+      page:
+        type: integer
+      pageSize:
+        type: integer
+    type: object
+  controller.QueryReplyBody:
+    properties:
+      page:
+        type: integer
+      pageSize:
+        type: integer
+      parentId:
+        type: integer
+    required:
+    - parentId
+    type: object
+  controller.ReplyVo:
+    properties:
+      ID:
+        type: integer
+      authId:
+        type: integer
+      authName:
+        type: string
+      content:
+        type: string
+      createdTime:
+        type: string
+      likeFlag:
+        type: boolean
+      likeNum:
+        type: integer
+      parentId:
+        type: integer
+      replyNum:
+        type: integer
+      title:
+        type: string
+      toAuthId:
+        type: integer
+      toAuthName:
+        type: string
+    type: object
+  controller.ReqArticle:
+    properties:
+      content:
+        type: string
+      title:
+        type: string
+    required:
+    - content
+    type: object
+  controller.ReqLike:
+    properties:
+      articleId:
+        type: integer
+    required:
+    - articleId
+    type: object
+  controller.ReqReply:
+    properties:
+      content:
+        type: string
+      parentId:
+        type: integer
+      toAuthId:
+        type: integer
+    required:
+    - content
+    - parentId
+    - toAuthId
+    type: object
+  controller.ReqUser:
+    properties:
+      name:
+        type: string
+      password:
+        type: string
+    required:
+    - name
+    - password
+    type: object
+  controller.StatVo:
+    properties:
+      articleNum:
+        description: 发布博客数量、点赞量、被回复量、被点赞量
+        type: integer
+      beLikedNum:
+        type: integer
+      beRepliedNum:
+        type: integer
+      likeNum:
+        type: integer
+    type: object
+  controller.UserVo:
+    properties:
+      ID:
+        type: integer
+      name:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /article/add:
+    post:
+      description: 发博客
+      parameters:
+      - description: ReqArticle
+        in: body
+        name: ReqArticle
+        required: true
+        schema:
+          $ref: '#/definitions/controller.ReqArticle'
+      responses:
+        "200":
+          description: OK
+      summary: 发博客
+      tags:
+      - article
+  /article/getMyArticle:
+    post:
+      description: 我的博客列表
+      parameters:
+      - description: PageParams
+        in: body
+        name: PageParams
+        required: true
+        schema:
+          $ref: '#/definitions/controller.PageParams'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller.PageResult-controller_ArticleVo'
+      summary: 我的博客列表
+      tags:
+      - article
+  /auth/getStats:
+    get:
+      description: 用户的统计信息
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller.StatVo'
+      summary: 统计
+      tags:
+      - auth
+  /auth/info:
+    get:
+      description: 当前用户信息
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller.UserVo'
+      summary: 用户信息
+      tags:
+      - auth
+  /auth/login:
+    post:
+      description: 用户登录
+      parameters:
+      - description: ReqUser
+        in: body
+        name: ReqUser
+        required: true
+        schema:
+          $ref: '#/definitions/controller.ReqUser'
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: 登录
+      tags:
+      - auth
+  /auth/register:
+    post:
+      description: 用户注册
+      parameters:
+      - description: ReqUser
+        in: body
+        name: ReqUser
+        required: true
+        schema:
+          $ref: '#/definitions/controller.ReqUser'
+      responses:
+        "200":
+          description: OK
+      summary: 注册
+      tags:
+      - auth
+  /common/article/getById/:ID:
+    get:
+      description: 博客详情
+      parameters:
+      - description: ID
+        in: path
+        name: ID
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller.ArticleVo'
+      summary: 博客详情
+      tags:
+      - article
+  /common/article/query:
+    post:
+      description: 博客列表
+      parameters:
+      - description: QueryArticleBody
+        in: body
+        name: QueryArticleBody
+        required: true
+        schema:
+          $ref: '#/definitions/controller.QueryArticleBody'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller.PageResult-controller_ArticleVo'
+      summary: 博客列表
+      tags:
+      - article
+  /common/reply/query:
+    post:
+      description: 博客/回复的回复列表
+      parameters:
+      - description: QueryReplyBody
+        in: body
+        name: QueryReplyBody
+        required: true
+        schema:
+          $ref: '#/definitions/controller.QueryReplyBody'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller.PageResult-controller_ReplyVo'
+      summary: 回复列表
+      tags:
+      - reply
+  /delete/:ID:
+    delete:
+      description: 删除博客(当前用户的)
+      parameters:
+      - description: ID
+        in: path
+        name: ID
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+      summary: 删除博客
+      tags:
+      - article
+  /like/add:
+    post:
+      description: 点赞
+      parameters:
+      - description: ReqLike
+        in: body
+        name: ReqLike
+        required: true
+        schema:
+          $ref: '#/definitions/controller.ReqLike'
+      responses:
+        "200":
+          description: OK
+      summary: 点赞
+      tags:
+      - like
+  /like/cancel:
+    post:
+      description: 取消点赞
+      parameters:
+      - description: ReqLike
+        in: body
+        name: ReqLike
+        required: true
+        schema:
+          $ref: '#/definitions/controller.ReqLike'
+      responses:
+        "200":
+          description: OK
+      summary: 取消点赞
+      tags:
+      - like
+  /reply/add:
+    post:
+      description: 回复博客/回复
+      parameters:
+      - description: ReqReply
+        in: body
+        name: ReqReply
+        required: true
+        schema:
+          $ref: '#/definitions/controller.ReqReply'
+      responses:
+        "200":
+          description: OK
+      summary: 回复
+      tags:
+      - reply
+  /reply/getMyReply:
+    post:
+      description: 我的所有回复列表
+      parameters:
+      - description: PageParams
+        in: body
+        name: PageParams
+        required: true
+        schema:
+          $ref: '#/definitions/controller.PageParams'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller.PageResult-controller_ReplyVo'
+      summary: 我的所有回复列表
+      tags:
+      - reply
+swagger: "2.0"

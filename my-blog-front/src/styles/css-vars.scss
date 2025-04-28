@@ -1,0 +1,69 @@
+:root {
+  --main-color: #fff;
+  --main-color-opposite: #474a79;
+
+  --bg-color-1: #f2f3f5;
+  --bg-color-2: #f7f8fa;
+  --global-border-color: #bebebe; // border color
+  --el-menu-active-color: #9298ff !important; // el-menu active color
+  --el-menu-hover-text-color: #959aff !important; // el-menu hover text color
+  --el-menu-hover-bg-color: none !important; // el-menu hover bg color
+  --el-menu-bg-color: transparent !important; // el-menu bg color
+
+  background-color: var(--bg-color-1);
+
+  .el-input, .el-textarea {
+    --el-input-border-color: var(--global-border-color);
+  }
+  .el-switch {
+    --el-switch-on-color: #5e66a1;
+  }
+  .el-button:hover {
+    color: black;
+  }
+  .el-card {
+    --el-card-bg-color: var(--bg-color-2) !important; // el-card bg color
+  }
+  .el-backtop {
+    --el-backtop-bg-color: var(--bg-color-1);
+    --el-backtop-hover-bg-color: var(--bg-color-2);
+    --el-backtop-text-color: var(--main-color-opposite);
+  }
+  .dashLeftCard {
+    border: 1px solid var(--global-border-color);
+  }
+  .aplayer-title {
+    color: black;
+  }
+  .aplayer.aplayer-fixed .aplayer-body {
+    background-color: var(--bg-color-1);
+  }
+  .aplayer .aplayer-miniswitcher .aplayer-icon {
+    background-color: var(--bg-color-1);
+  }
+}
+
+html.dark {
+  --main-color: #474a79;
+  --main-color-opposite: #fff;
+
+  --bg-color-1: #2c3053;
+  --bg-color-2: #20233e;
+  --global-border-color: #5a619b; // border color
+  --el-fill-color-light: #404264; // el-button fill color
+  --el-box-shadow-light: 0px 0px 12px rgba(84, 84, 150, 0.805); // box shadow
+  --el-menu-active-color: #9297f5 !important; // el-menu active color
+  --el-menu-hover-text-color: #959aff !important; // el-menu hover text color
+
+  background-color: var(--bg-color-1);
+
+  .el-button {
+    background-color: #5c5d91 !important;
+  }
+  .el-button:hover {
+    color: white;
+  }
+  .aplayer-title {
+    color: #666;
+  }
+}
