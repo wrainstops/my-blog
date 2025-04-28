@@ -1,7 +1,7 @@
 server:
+  mode: debug # debug 或者 release
   port: 8081
-datasource:
-  driverName: mysql
+mysql:
   host: 127.0.0.1
   # host: host.docker.internal
   port: 3306
@@ -10,3 +10,7 @@ datasource:
   # password: czl1121741X
   password: student
   charset: utf8
+redis:
+  addr: 127.0.0.1:6379
+  password: ""
+  db: 0

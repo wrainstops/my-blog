@@ -7,12 +7,6 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# ===== my-blog-front =====
-node_modules
-dist
-dist-ssr
-*.local
-
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -36,3 +30,11 @@ dist-ssr
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+
+# ===== my-blog-front =====
+node_modules
+dist
+dist-ssr
+*.local
+# ===== my-blog-back =====
+*.rdb
