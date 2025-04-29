@@ -1,7 +1,9 @@
 package controller
 
 import (
+	"errors"
 	"fmt"
+	"gorm.io/gorm"
 	"log/slog"
 	"my_blog_back/common"
 	"my_blog_back/model"
@@ -89,7 +91,7 @@ func (*Like) Add(context *gin.Context) {
 // @Success 200 {object} nil
 // @Router /like/cancel [post]
 func (*Like) Cancel(context *gin.Context) {
-	// DB := common.GetDB()
+	DB := common.GetDB()
 	RDB := common.GetRedis()
 	cancelLike := ReqLike{}
 	err := context.ShouldBindJSON(&cancelLike)
@@ -132,6 +134,23 @@ func (*Like) Cancel(context *gin.Context) {
 		return
 	} else {
 		RDB.SRem(rctx, rdbSetKey, user.ID)
+		if RDB.SCard(rctx, rdbSetKey).Val() == 0 {
+			err = model.DeleteLike(DB, user.ID, articleId)
+			if err != nil {
+				ReturnServerError(context, nil, "取消点赞失败")
+				return
+			}
+			// like_num--
+			err = model.UpdateReplyOrLikeNum(DB, articleId, "subLike")
+			if err != nil {
+				if errors.Is(err, gorm.ErrRecordNotFound) {
+					ReturnOtherError(context, nil, "未找到点赞的博客")
+					return
+				}
+				ReturnServerError(context, nil, "数据库异常")
+				return
+			}
+		}
 	}
 
 	/*
