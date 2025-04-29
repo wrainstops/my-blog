@@ -124,7 +124,7 @@ func (*User) Login(context *gin.Context) {
 		ReturnServerError(context, nil, "数据库异常")
 		return
 	}
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
+	if err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
 		ReturnFail(context, nil, "密码错误")
 		return
 	}

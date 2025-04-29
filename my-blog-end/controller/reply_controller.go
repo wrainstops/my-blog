@@ -2,6 +2,7 @@ package controller
 
 import (
 	"errors"
+	"fmt"
 	"log/slog"
 	"my_blog_back/common"
 	"my_blog_back/model"
@@ -10,6 +11,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
 )
 
 type Reply struct{}
@@ -40,17 +42,23 @@ type ReplyVo struct {
 	LikeFlag   bool      `json:"likeFlag"`
 }
 
-func ToReplyVo(reply []model.Article, like []model.Like) []ReplyVo {
+func ToReplyVo(reply []model.Article, rdb *redis.Client, userId uint) []ReplyVo {
 	replyVo := make([]ReplyVo, 0)
+	var likeNum int64
 	likeFlag := false
 	for _, v := range reply {
 		likeFlag = false
-		for _, v2 := range like {
-			if v.ID == v2.ArticleId {
-				likeFlag = true
-				break
-			}
+		rdbSetKey := fmt.Sprintf("articlesLikeHash:%v", v.ID)
+		likeNum = model.GetRdbArticleLikeNum(rdb, rctx, rdbSetKey)
+		if model.CheckRdbHasLikeData(rdb, rctx, rdbSetKey, userId) {
+			likeFlag = true
 		}
+		// for _, v2 := range like {
+		// 	if v.ID == v2.ArticleId {
+		// 		likeFlag = true
+		// 		break
+		// 	}
+		// }
 		replyVo = append(replyVo, ReplyVo{
 			ID:         v.ID,
 			Title:      v.Title,
@@ -61,7 +69,7 @@ func ToReplyVo(reply []model.Article, like []model.Like) []ReplyVo {
 			ToAuthId:   v.ToAuthId,
 			ToAuthName: v.ToAuth.Name,
 			CreatedAt:  v.CreatedAt,
-			LikeNum:    v.LikeNum,
+			LikeNum:    likeNum,
 			ReplyNum:   v.ReplyNum,
 			LikeFlag:   likeFlag,
 		})
@@ -128,6 +136,7 @@ func (*Reply) Add(context *gin.Context) {
 // @Router /common/reply/query [post]
 func (*Reply) Query(context *gin.Context) {
 	DB := common.GetDB()
+	RDB := common.GetRedis()
 	query := QueryReplyBody{}
 	err := context.ShouldBindJSON(&query)
 	if err != nil {
@@ -142,19 +151,19 @@ func (*Reply) Query(context *gin.Context) {
 		return
 	}
 
-	user, ok := GetCurrentUserInfo(context)
-	like := make([]model.Like, 0)
-	if ok {
-		like, _, err = model.GetUserLike(DB, user.ID)
-		if err != nil {
-			ReturnServerError(context, nil, "查询用户点赞失败")
-			return
-		}
-	}
+	user, _ := GetCurrentUserInfo(context)
+	// like := make([]model.Like, 0)
+	// if ok {
+	// 	like, _, err = model.GetUserLike(DB, user.ID)
+	// 	if err != nil {
+	// 		ReturnServerError(context, nil, "查询用户点赞失败")
+	// 		return
+	// 	}
+	// }
 
 	ReturnSuccess(context, PageResult[ReplyVo]{
 		All:     count,
-		Content: ToReplyVo(reply, like),
+		Content: ToReplyVo(reply, RDB, user.ID),
 	})
 }
 
@@ -166,6 +175,7 @@ func (*Reply) Query(context *gin.Context) {
 // @Router /reply/getMyReply [post]
 func (*Reply) GetMyReply(context *gin.Context) {
 	DB := common.GetDB()
+	RDB := common.GetRedis()
 	query := PageParams{}
 	err := context.ShouldBindJSON(&query)
 	if err != nil {
@@ -183,17 +193,17 @@ func (*Reply) GetMyReply(context *gin.Context) {
 		return
 	}
 
-	like := make([]model.Like, 0)
-	if ok {
-		like, _, err = model.GetUserLike(DB, user.ID)
-		if err != nil {
-			ReturnServerError(context, nil, "查询用户点赞失败")
-			return
-		}
-	}
+	// like := make([]model.Like, 0)
+	// if ok {
+	// 	like, _, err = model.GetUserLike(DB, user.ID)
+	// 	if err != nil {
+	// 		ReturnServerError(context, nil, "查询用户点赞失败")
+	// 		return
+	// 	}
+	// }
 
 	ReturnSuccess(context, PageResult[ReplyVo]{
 		All:     count,
-		Content: ToReplyVo(reply, like),
+		Content: ToReplyVo(reply, RDB, user.ID),
 	})
 }

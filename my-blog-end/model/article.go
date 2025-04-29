@@ -72,7 +72,7 @@ func GetArticleOrReplyList(db *gorm.DB, page, pageSize int, listType uint, key s
 func GetDetail(db *gorm.DB, id uint) (data *Article, err error) {
 	res := db.Preload("User").
 		Where("parent_id IS NULL AND ID = ?", id).
-		First(&data)
+		First(&data) // 查不到first会报错，find不会报错
 
 	return data, res.Error
 }

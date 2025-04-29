@@ -2,6 +2,7 @@ package controller
 
 import (
 	"errors"
+	"fmt"
 	"log/slog"
 	"my_blog_back/common"
 	"my_blog_back/model"
@@ -9,6 +10,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
@@ -38,17 +40,23 @@ type ArticleVo struct {
 	LikeFlag  bool      `json:"likeFlag"`
 }
 
-func ToArticleVo(article []model.Article, like []model.Like) []ArticleVo {
+func ToArticleVo(article []model.Article, rdb *redis.Client, userId uint) []ArticleVo {
 	articleVo := make([]ArticleVo, 0)
+	var likeNum int64
 	likeFlag := false
 	for _, v := range article {
 		likeFlag = false
-		for _, v2 := range like {
-			if v.ID == v2.ArticleId {
-				likeFlag = true
-				break
-			}
+		rdbSetKey := fmt.Sprintf("articlesLikeHash:%v", v.ID)
+		likeNum = model.GetRdbArticleLikeNum(rdb, rctx, rdbSetKey)
+		if model.CheckRdbHasLikeData(rdb, rctx, rdbSetKey, userId) {
+			likeFlag = true
 		}
+		// for _, v2 := range like {
+		// 	if v.ID == v2.ArticleId {
+		// 		likeFlag = true
+		// 		break
+		// 	}
+		// }
 		articleVo = append(articleVo, ArticleVo{
 			ID:        v.ID,
 			Title:     v.Title,
@@ -57,7 +65,7 @@ func ToArticleVo(article []model.Article, like []model.Like) []ArticleVo {
 			AuthId:    v.UserID,
 			AuthName:  v.User.Name,
 			CreatedAt: v.CreatedAt,
-			LikeNum:   v.LikeNum,
+			LikeNum:   likeNum,
 			ReplyNum:  v.ReplyNum,
 			LikeFlag:  likeFlag,
 		})
@@ -113,6 +121,7 @@ func (*Article) Add(context *gin.Context) {
 // @Router /common/article/query [post]
 func (*Article) Query(context *gin.Context) {
 	DB := common.GetDB()
+	RDB := common.GetRedis()
 	query := QueryArticleBody{}
 	err := context.ShouldBindJSON(&query)
 	if err != nil {
@@ -125,19 +134,19 @@ func (*Article) Query(context *gin.Context) {
 		return
 	}
 
-	user, ok := GetCurrentUserInfo(context)
-	like := make([]model.Like, 0)
-	if ok {
-		like, _, err = model.GetUserLike(DB, user.ID)
-		if err != nil {
-			ReturnServerError(context, nil, "查询用户点赞失败")
-			return
-		}
-	}
+	user, _ := GetCurrentUserInfo(context)
+	// like := make([]model.Like, 0)
+	// if ok {
+	// 	like, _, err = model.GetUserLike(DB, user.ID)
+	// 	if err != nil {
+	// 		ReturnServerError(context, nil, "查询用户点赞失败")
+	// 		return
+	// 	}
+	// }
 
 	ReturnSuccess(context, PageResult[ArticleVo]{
 		All:     count,
-		Content: ToArticleVo(article, like),
+		Content: ToArticleVo(article, RDB, user.ID),
 	})
 }
 
@@ -149,6 +158,7 @@ func (*Article) Query(context *gin.Context) {
 // @Router /article/getMyArticle [post]
 func (*Article) GetMyArticle(context *gin.Context) {
 	DB := common.GetDB()
+	RDB := common.GetRedis()
 	query := PageParams{}
 	err := context.ShouldBindJSON(&query)
 	if err != nil {
@@ -166,18 +176,18 @@ func (*Article) GetMyArticle(context *gin.Context) {
 		return
 	}
 
-	like := make([]model.Like, 0)
-	if ok {
-		like, _, err = model.GetUserLike(DB, user.ID)
-		if err != nil {
-			ReturnServerError(context, nil, "查询用户点赞失败")
-			return
-		}
-	}
+	// like := make([]model.Like, 0)
+	// if ok {
+	// 	like, _, err = model.GetUserLike(DB, user.ID)
+	// 	if err != nil {
+	// 		ReturnServerError(context, nil, "查询用户点赞失败")
+	// 		return
+	// 	}
+	// }
 
 	ReturnSuccess(context, PageResult[ArticleVo]{
 		All:     count,
-		Content: ToArticleVo(article, like),
+		Content: ToArticleVo(article, RDB, user.ID),
 	})
 }
 
@@ -189,6 +199,7 @@ func (*Article) GetMyArticle(context *gin.Context) {
 // @Router /common/article/getById/:ID [get]
 func (*Article) GetById(context *gin.Context) {
 	DB := common.GetDB()
+	RDB := common.GetRedis()
 	_articleId, err := strconv.ParseUint(context.Param("ID"), 10, 0)
 	if err != nil {
 		ReturnOtherError(context, nil, "博客ID解析错误")
@@ -208,8 +219,12 @@ func (*Article) GetById(context *gin.Context) {
 	user, ok := GetCurrentUserInfo(context)
 	likeFlag := false
 	if ok {
-		err = model.CheckHasLikeData(DB, user.ID, articleId)
-		if err == nil {
+		// err = model.CheckHasLikeData(DB, user.ID, articleId)
+		// if err == nil {
+		// 	likeFlag = true
+		// }
+		rdbSetKey := fmt.Sprintf("articlesLikeHash:%v", articleId)
+		if model.CheckRdbHasLikeData(RDB, rctx, rdbSetKey, user.ID) {
 			likeFlag = true
 		}
 	}

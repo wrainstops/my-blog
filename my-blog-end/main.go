@@ -28,8 +28,10 @@ func main() {
 	r.Use(gin.Logger(), gin.Recovery())
 
 	// 连接数据库
-	common.InitDB(c)
-	common.InitRedis(c)
+	db := common.InitDB(c)
+	rdb := common.InitRedis(c)
+
+	go common.SyncRdbToMysql(db, rdb)
 
 	// 访问地址，接收请求
 	router.CollectRoute(r)

@@ -1,11 +1,15 @@
 package controller
 
 import (
+	"context"
 	"my_blog_back/model"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
+
+// redis context
+var rctx = context.Background()
 
 // PageParams分页参数
 type PageParams struct {
