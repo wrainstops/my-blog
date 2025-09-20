@@ -74,7 +74,7 @@ func LikeRoute(r *gin.Engine) {
 func NeedAuthOrNotRoute(r *gin.Engine) {
 	com := r.Group("/common")
 
-	com.Use(middleware.AuthMiddleware1())
+	com.Use(middleware.AuthMiddlewareNoUser())
 
 	com.POST("/article/query", articleApi.Query)
 	com.GET("/article/getById/:ID", articleApi.GetById)

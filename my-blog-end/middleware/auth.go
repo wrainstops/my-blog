@@ -51,7 +51,7 @@ func AuthMiddleware() gin.HandlerFunc {
 	}
 }
 
-func AuthMiddleware1() gin.HandlerFunc {
+func AuthMiddlewareNoUser() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		tokenString := context.GetHeader("Authorization")
 
