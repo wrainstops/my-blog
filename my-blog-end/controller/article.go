@@ -51,12 +51,6 @@ func ToArticleVo(article []model.Article, rdb *redis.Client, userId uint) []Arti
 		if model.CheckRdbHasLikeData(rdb, rctx, rdbSetKey, userId) {
 			likeFlag = true
 		}
-		// for _, v2 := range like {
-		// 	if v.ID == v2.ArticleId {
-		// 		likeFlag = true
-		// 		break
-		// 	}
-		// }
 		articleVo = append(articleVo, ArticleVo{
 			ID:        v.ID,
 			Title:     v.Title,
@@ -135,14 +129,6 @@ func (*Article) Query(context *gin.Context) {
 	}
 
 	user, _ := GetCurrentUserInfo(context)
-	// like := make([]model.Like, 0)
-	// if ok {
-	// 	like, _, err = model.GetUserLike(DB, user.ID)
-	// 	if err != nil {
-	// 		ReturnServerError(context, nil, "查询用户点赞失败")
-	// 		return
-	// 	}
-	// }
 
 	ReturnSuccess(context, PageResult[ArticleVo]{
 		All:     count,
@@ -175,15 +161,6 @@ func (*Article) GetMyArticle(context *gin.Context) {
 		ReturnServerError(context, nil, "查询博客失败")
 		return
 	}
-
-	// like := make([]model.Like, 0)
-	// if ok {
-	// 	like, _, err = model.GetUserLike(DB, user.ID)
-	// 	if err != nil {
-	// 		ReturnServerError(context, nil, "查询用户点赞失败")
-	// 		return
-	// 	}
-	// }
 
 	ReturnSuccess(context, PageResult[ArticleVo]{
 		All:     count,
@@ -219,10 +196,6 @@ func (*Article) GetById(context *gin.Context) {
 	user, ok := GetCurrentUserInfo(context)
 	likeFlag := false
 	if ok {
-		// err = model.CheckHasLikeData(DB, user.ID, articleId)
-		// if err == nil {
-		// 	likeFlag = true
-		// }
 		rdbSetKey := fmt.Sprintf("articlesLikeHash:%v", articleId)
 		if model.CheckRdbHasLikeData(RDB, rctx, rdbSetKey, user.ID) {
 			likeFlag = true

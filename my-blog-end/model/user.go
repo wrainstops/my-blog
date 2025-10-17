@@ -21,6 +21,17 @@ func AddUser(db *gorm.DB, user User) error {
 }
 
 /**
+ * GetUserById 用id搜索用户
+ * @param userId {uint} 用户id
+ * @return {User} 用户
+ */
+func GetUserById(db *gorm.DB, userId uint) (User, error) {
+	var user User
+	res := db.Where("id = ?", userId).First(&user)
+	return user, res.Error
+}
+
+/**
  * GetUserByName 用name搜索用户
  * @param name {string} 用户name
  * @return {User} 用户

@@ -10,7 +10,8 @@ import (
 )
 
 var (
-	authApi    controller.User
+	authApi    controller.Auth
+	userApi    controller.User
 	articleApi controller.Article
 	replyApi   controller.Reply
 	likeApi    controller.Like
@@ -20,13 +21,14 @@ func CollectRoute(r *gin.Engine) {
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.Use(middleware.ValidateTypeMiddleware())
 	AuthRoute(r)
+	UserRoute(r)
 	ArticleRoute(r)
 	ReplyRoute(r)
 	LikeRoute(r)
 	NeedAuthOrNotRoute(r)
 }
 
-// AuthRoute 用户路由 - 注册、登录、获取用户信息、用户统计项
+// AuthRoute 认证路由 - 注册、登录、获取当前用户信息、用户统计项
 func AuthRoute(r *gin.Engine) {
 	auth := r.Group("/auth")
 
@@ -37,6 +39,13 @@ func AuthRoute(r *gin.Engine) {
 
 	auth.GET("/info", authApi.Info)
 	auth.GET("/getStats", authApi.GetStats)
+}
+
+// UserRoute 用户路由 - 获取其他用户信息
+func UserRoute(r *gin.Engine) {
+	user := r.Group("/user")
+
+	user.GET("/getOtherUserInfo/:userId", userApi.GetOtherUserInfo)
 }
 
 // ArticleRoute 博客路由 - 获取我的博客、创建博客、删除博客

@@ -12,7 +12,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type User struct{}
+type Auth struct{}
 
 type ReqUser struct {
 	Name     string `json:"name" binding:"required"`
@@ -45,7 +45,7 @@ func ToUserVo(user model.User) UserVo {
 // @Param ReqUser body ReqUser true "ReqUser"
 // @Success 200 {object} nil
 // @Router /auth/register [post]
-func (*User) Register(context *gin.Context) {
+func (*Auth) Register(context *gin.Context) {
 	DB := common.GetDB()
 	req := ReqUser{}
 	err := context.ShouldBindJSON(&req)
@@ -94,7 +94,7 @@ func (*User) Register(context *gin.Context) {
 // @Param ReqUser body ReqUser true "ReqUser"
 // @Success 200 {string} token
 // @Router /auth/login [post]
-func (*User) Login(context *gin.Context) {
+func (*Auth) Login(context *gin.Context) {
 	DB := common.GetDB()
 	req := ReqUser{}
 	err := context.ShouldBindJSON(&req)
@@ -146,7 +146,7 @@ func (*User) Login(context *gin.Context) {
 // @Tags auth
 // @Success 200 {object} UserVo
 // @Router /auth/info [get]
-func (*User) Info(context *gin.Context) {
+func (*Auth) Info(context *gin.Context) {
 	user, ok := GetCurrentUserInfo(context)
 	if !ok {
 		ReturnOtherError(context, nil, "获取用户信息错误")
@@ -161,7 +161,7 @@ func (*User) Info(context *gin.Context) {
 // @Tags auth
 // @Success 200 {object} StatVo
 // @Router /auth/getStats [get]
-func (*User) GetStats(context *gin.Context) {
+func (*Auth) GetStats(context *gin.Context) {
 	user, ok := GetCurrentUserInfo(context)
 	if !ok {
 		ReturnOtherError(context, nil, "获取用户信息错误")
