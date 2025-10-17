@@ -45,6 +45,8 @@ func AuthRoute(r *gin.Engine) {
 func UserRoute(r *gin.Engine) {
 	user := r.Group("/user")
 
+	user.Use(middleware.AuthMiddleware())
+
 	user.GET("/getOtherUserInfo/:userId", userApi.GetOtherUserInfo)
 	user.GET("/getOtherUserStats/:userId", userApi.GetOtherUserStats)
 }
