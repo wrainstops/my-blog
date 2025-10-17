@@ -260,58 +260,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/getOtherUserInfo/:userId": {
-            "get": {
-                "description": "获取其他用户的信息",
-                "tags": [
-                    "user"
-                ],
-                "summary": "获取其他用户的信息",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "用户id",
-                        "name": "userId",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/controller.UserVo"
-                        }
-                    }
-                }
-            }
-        },
-        "/getOtherUserStats/:userId": {
-            "get": {
-                "description": "获取其他用户的统计信息",
-                "tags": [
-                    "user"
-                ],
-                "summary": "获取其他用户的统计信息",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "用户id",
-                        "name": "userId",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/controller.StatVo"
-                        }
-                    }
-                }
-            }
-        },
         "/like/add": {
             "post": {
                 "description": "点赞",
@@ -414,6 +362,78 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/user/getOtherUserInfo/:userId": {
+            "get": {
+                "description": "获取其他用户的信息",
+                "tags": [
+                    "user"
+                ],
+                "summary": "获取其他用户的信息",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "用户id",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controller.UserVo"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/getOtherUserStats/:userId": {
+            "get": {
+                "description": "获取其他用户的统计信息",
+                "tags": [
+                    "user"
+                ],
+                "summary": "获取其他用户的统计信息",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "用户id",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controller.StatVo"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/getRecentContacts": {
+            "get": {
+                "description": "获取最近聊天的联系人",
+                "tags": [
+                    "user"
+                ],
+                "summary": "获取最近联系人",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/controller.Contacts"
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -448,6 +468,17 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "controller.Contacts": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
                     "type": "string"
                 }
             }

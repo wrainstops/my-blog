@@ -1,7 +1,10 @@
 ### RUN
-```
+
+```sh
 go mod tidy
 go run ./
+
+# 访问 http://127.0.0.1:8081/swagger/index.html 查看swagger
 ```
 
 ### 开发部署中问题记录

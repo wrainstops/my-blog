@@ -49,6 +49,7 @@ func UserRoute(r *gin.Engine) {
 
 	user.GET("/getOtherUserInfo/:userId", userApi.GetOtherUserInfo)
 	user.GET("/getOtherUserStats/:userId", userApi.GetOtherUserStats)
+	user.GET("/getRecentContacts", userApi.GetRecentContacts)
 }
 
 // ArticleRoute 博客路由 - 获取我的博客、创建博客、删除博客

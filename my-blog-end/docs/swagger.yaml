@@ -22,6 +22,13 @@ definitions:
       title:
         type: string
     type: object
+  controller.Contacts:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
   controller.PageParams:
     properties:
       page:
@@ -325,40 +332,6 @@ paths:
       summary: 删除博客
       tags:
       - article
-  /getOtherUserInfo/:userId:
-    get:
-      description: 获取其他用户的信息
-      parameters:
-      - description: 用户id
-        in: path
-        name: userId
-        required: true
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/controller.UserVo'
-      summary: 获取其他用户的信息
-      tags:
-      - user
-  /getOtherUserStats/:userId:
-    get:
-      description: 获取其他用户的统计信息
-      parameters:
-      - description: 用户id
-        in: path
-        name: userId
-        required: true
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/controller.StatVo'
-      summary: 获取其他用户的统计信息
-      tags:
-      - user
   /like/add:
     post:
       description: 点赞
@@ -425,4 +398,51 @@ paths:
       summary: 我的所有回复列表
       tags:
       - reply
+  /user/getOtherUserInfo/:userId:
+    get:
+      description: 获取其他用户的信息
+      parameters:
+      - description: 用户id
+        in: path
+        name: userId
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller.UserVo'
+      summary: 获取其他用户的信息
+      tags:
+      - user
+  /user/getOtherUserStats/:userId:
+    get:
+      description: 获取其他用户的统计信息
+      parameters:
+      - description: 用户id
+        in: path
+        name: userId
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller.StatVo'
+      summary: 获取其他用户的统计信息
+      tags:
+      - user
+  /user/getRecentContacts:
+    get:
+      description: 获取最近聊天的联系人
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/controller.Contacts'
+            type: array
+      summary: 获取最近联系人
+      tags:
+      - user
 swagger: "2.0"

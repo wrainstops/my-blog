@@ -1,6 +1,9 @@
 package model
 
 import (
+	"context"
+
+	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
@@ -74,4 +77,14 @@ func GetStat(db *gorm.DB, userId uint) (a, b, c, d int64, err error) {
 
 	err = res.Error
 	return
+}
+
+/**
+ * GetRecentContacts 获取最近聊天的联系人
+ * @param ctx {context.Context} redis context
+ * @param key {string} redis key
+ * @return {[]string} 最近聊天的联系人
+ */
+func GetRecentContacts(rdb *redis.Client, ctx context.Context, key string) []string {
+	return rdb.LRange(ctx, key, 0, -1).Val()
 }

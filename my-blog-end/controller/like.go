@@ -43,24 +43,6 @@ func (*Like) Add(context *gin.Context) {
 		return
 	}
 
-	/*
-		// 唯一性校验
-		err = model.CheckHasLikeData(DB, user.ID, articleId)
-		if err == nil {
-			ReturnOtherError(context, nil, "本用户已点赞过本博客")
-			return
-		}
-
-		newLike := model.Like{
-			UserID:    user.ID,
-			ArticleId: addLike.ArticleId,
-		}
-		err = model.AddLike(DB, &newLike)
-		if err != nil {
-			ReturnServerError(context, nil, "点赞失败")
-			return
-		}
-	*/
 	rdbSetKey := fmt.Sprintf("articlesLikeHash:%v", articleId)
 	if model.CheckRdbHasLikeData(RDB, rctx, rdbSetKey, user.ID) {
 		ReturnOtherError(context, nil, "本用户已点赞过本博客")
@@ -68,19 +50,6 @@ func (*Like) Add(context *gin.Context) {
 	} else {
 		RDB.SAdd(rctx, rdbSetKey, user.ID)
 	}
-
-	/*
-		// like_num++
-		err = model.UpdateReplyOrLikeNum(DB, articleId, "addLike")
-		if err != nil {
-			if errors.Is(err, gorm.ErrRecordNotFound) {
-				ReturnOtherError(context, nil, "未找到点赞的博客")
-				return
-			}
-			ReturnServerError(context, nil, "数据库异常")
-			return
-		}
-	*/
 
 	ReturnSuccess(context, nil)
 }
@@ -110,25 +79,6 @@ func (*Like) Cancel(context *gin.Context) {
 		return
 	}
 
-	/*
-		// 唯一性校验
-		err = model.CheckHasLikeData(DB, user.ID, articleId)
-		if err != nil {
-			// 没数据的情况
-			if errors.Is(err, gorm.ErrRecordNotFound) {
-				ReturnOtherError(context, nil, "本用户未点赞过本博客哦~.~")
-				return
-			}
-			ReturnServerError(context, nil, "数据库异常")
-			return
-		}
-
-		err = model.DeleteLike(DB, user.ID, articleId)
-		if err != nil {
-			ReturnServerError(context, nil, "取消点赞失败")
-			return
-		}
-	*/
 	rdbSetKey := fmt.Sprintf("articlesLikeHash:%v", articleId)
 	if !model.CheckRdbHasLikeData(RDB, rctx, rdbSetKey, user.ID) {
 		ReturnOtherError(context, nil, "本用户未点赞过本博客哦~.~")
@@ -153,19 +103,6 @@ func (*Like) Cancel(context *gin.Context) {
 			}
 		}
 	}
-
-	/*
-		// like_num--
-		err = model.UpdateReplyOrLikeNum(DB, articleId, "subLike")
-		if err != nil {
-			if errors.Is(err, gorm.ErrRecordNotFound) {
-				ReturnOtherError(context, nil, "未找到点赞的博客")
-				return
-			}
-			ReturnServerError(context, nil, "数据库异常")
-			return
-		}
-	*/
 
 	ReturnSuccess(context, nil)
 }
