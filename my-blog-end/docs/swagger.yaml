@@ -65,6 +65,8 @@ definitions:
         type: integer
       pageSize:
         type: integer
+      userId:
+        type: integer
     type: object
   controller.QueryReplyBody:
     properties:
@@ -181,27 +183,27 @@ paths:
       summary: 发博客
       tags:
       - article
-  /article/getMyArticle:
+  /article/getSomeoneArticle:
     post:
-      description: 我的博客列表
+      description: 某人的博客列表，不传userId查询当前用户的
       parameters:
-      - description: PageParams
+      - description: QueryArticleBody
         in: body
-        name: PageParams
+        name: QueryArticleBody
         required: true
         schema:
-          $ref: '#/definitions/controller.PageParams'
+          $ref: '#/definitions/controller.QueryArticleBody'
       responses:
         "200":
           description: OK
           schema:
             $ref: '#/definitions/controller.PageResult-controller_ArticleVo'
-      summary: 我的博客列表
+      summary: 某人的博客列表
       tags:
       - article
   /auth/getStats:
     get:
-      description: 用户的统计信息
+      description: 当前用户的统计信息
       responses:
         "200":
           description: OK
@@ -323,6 +325,40 @@ paths:
       summary: 删除博客
       tags:
       - article
+  /getOtherUserInfo/:userId:
+    get:
+      description: 获取其他用户的信息
+      parameters:
+      - description: 用户id
+        in: path
+        name: userId
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller.UserVo'
+      summary: 获取其他用户的信息
+      tags:
+      - user
+  /getOtherUserStats/:userId:
+    get:
+      description: 获取其他用户的统计信息
+      parameters:
+      - description: 用户id
+        in: path
+        name: userId
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller.StatVo'
+      summary: 获取其他用户的统计信息
+      tags:
+      - user
   /like/add:
     post:
       description: 点赞

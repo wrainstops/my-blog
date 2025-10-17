@@ -28,7 +28,7 @@ func CollectRoute(r *gin.Engine) {
 	NeedAuthOrNotRoute(r)
 }
 
-// AuthRoute 认证路由 - 注册、登录、获取当前用户信息、用户统计项
+// AuthRoute 认证路由 - 注册、登录、获取当前用户信息、当前用户统计项
 func AuthRoute(r *gin.Engine) {
 	auth := r.Group("/auth")
 
@@ -41,11 +41,12 @@ func AuthRoute(r *gin.Engine) {
 	auth.GET("/getStats", authApi.GetStats)
 }
 
-// UserRoute 用户路由 - 获取其他用户信息
+// UserRoute 用户路由 - 获取其他用户信息、其他用户统计项
 func UserRoute(r *gin.Engine) {
 	user := r.Group("/user")
 
 	user.GET("/getOtherUserInfo/:userId", userApi.GetOtherUserInfo)
+	user.GET("/getOtherUserStats/:userId", userApi.GetOtherUserStats)
 }
 
 // ArticleRoute 博客路由 - 获取我的博客、创建博客、删除博客
@@ -56,7 +57,7 @@ func ArticleRoute(r *gin.Engine) {
 
 	article.POST("/add", articleApi.Add)
 	article.DELETE("/delete/:ID", articleApi.Delete)
-	article.POST("/getMyArticle", articleApi.GetMyArticle)
+	article.POST("/getSomeoneArticle", articleApi.GetSomeoneArticle)
 }
 
 // ReplyRoute 评论路由 - 评论

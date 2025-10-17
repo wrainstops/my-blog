@@ -23,6 +23,7 @@ type ReqArticle struct {
 
 type QueryArticleBody struct {
 	PageParams
+	UserId          uint   `json:"userId"`
 	Key             string `json:"key"`
 	DescCreatedTime bool   `json:"descCreatedTime"`
 }
@@ -78,7 +79,7 @@ func (*Article) Add(context *gin.Context) {
 	req := ReqArticle{}
 	err := context.ShouldBindJSON(&req)
 	if err != nil {
-		slog.Error("Login参数格式有误")
+		slog.Error("/article/add参数格式有误")
 		ReturnFail(context, nil, "参数格式有误")
 		return
 	}
@@ -119,6 +120,8 @@ func (*Article) Query(context *gin.Context) {
 	query := QueryArticleBody{}
 	err := context.ShouldBindJSON(&query)
 	if err != nil {
+		slog.Error("/common/article/query参数格式有误")
+		ReturnFail(context, nil, "参数格式有误")
 		return
 	}
 
@@ -136,18 +139,20 @@ func (*Article) Query(context *gin.Context) {
 	})
 }
 
-// @Summary 我的博客列表
-// @Description 我的博客列表
+// @Summary 某人的博客列表
+// @Description 某人的博客列表，不传userId查询当前用户的
 // @Tags article
-// @Param PageParams body PageParams true "PageParams"
+// @Param QueryArticleBody body QueryArticleBody true "QueryArticleBody"
 // @Success 200 {object} PageResult[ArticleVo]
-// @Router /article/getMyArticle [post]
-func (*Article) GetMyArticle(context *gin.Context) {
+// @Router /article/getSomeoneArticle [post]
+func (*Article) GetSomeoneArticle(context *gin.Context) {
 	DB := common.GetDB()
 	RDB := common.GetRedis()
-	query := PageParams{}
+	query := QueryArticleBody{}
 	err := context.ShouldBindJSON(&query)
 	if err != nil {
+		slog.Error("/article/getSomeoneArticle参数格式有误")
+		ReturnFail(context, nil, "参数格式有误")
 		return
 	}
 
@@ -156,7 +161,15 @@ func (*Article) GetMyArticle(context *gin.Context) {
 		ReturnOtherError(context, nil, "获取用户信息错误")
 		return
 	}
-	article, count, err := model.GetArticleOrReplyList(DB, query.Page, query.PageSize, 0, "", true, user.ID)
+
+	var userId uint
+	if query.UserId > 0 {
+		userId = query.UserId
+	} else {
+		userId = user.ID
+	}
+
+	article, count, err := model.GetArticleOrReplyList(DB, query.Page, query.PageSize, 0, "", true, userId)
 	if err != nil {
 		ReturnServerError(context, nil, "查询博客失败")
 		return

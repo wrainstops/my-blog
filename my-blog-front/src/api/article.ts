@@ -4,7 +4,7 @@ export const ajaxArticle = {
   query: (data: any) => $post('/common/article/query', data),
   add: (data: any) => $post('/article/add', data),
   getById: (id: number) => $get(`/common/article/getById/${ id }`),
-  getMyArticle: (data: any) => $post('/article/getMyArticle', data),
+  getMyArticle: (data: any) => $post('/article/GetSomeoneArticle', data),
   deleteArticle: (id: number) => $delete(`/article/delete/${ id }`),
 
   queryReply: (data: any) => $post('/common/reply/query', data),

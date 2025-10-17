@@ -29,21 +29,21 @@
                 }
             }
         },
-        "/article/getMyArticle": {
+        "/article/getSomeoneArticle": {
             "post": {
-                "description": "我的博客列表",
+                "description": "某人的博客列表，不传userId查询当前用户的",
                 "tags": [
                     "article"
                 ],
-                "summary": "我的博客列表",
+                "summary": "某人的博客列表",
                 "parameters": [
                     {
-                        "description": "PageParams",
-                        "name": "PageParams",
+                        "description": "QueryArticleBody",
+                        "name": "QueryArticleBody",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.PageParams"
+                            "$ref": "#/definitions/controller.QueryArticleBody"
                         }
                     }
                 ],
@@ -59,7 +59,7 @@
         },
         "/auth/getStats": {
             "get": {
-                "description": "用户的统计信息",
+                "description": "当前用户的统计信息",
                 "tags": [
                     "auth"
                 ],
@@ -245,6 +245,58 @@
                 "responses": {
                     "200": {
                         "description": "OK"
+                    }
+                }
+            }
+        },
+        "/getOtherUserInfo/:userId": {
+            "get": {
+                "description": "获取其他用户的信息",
+                "tags": [
+                    "user"
+                ],
+                "summary": "获取其他用户的信息",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "用户id",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controller.UserVo"
+                        }
+                    }
+                }
+            }
+        },
+        "/getOtherUserStats/:userId": {
+            "get": {
+                "description": "获取其他用户的统计信息",
+                "tags": [
+                    "user"
+                ],
+                "summary": "获取其他用户的统计信息",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "用户id",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controller.StatVo"
+                        }
                     }
                 }
             }
@@ -453,6 +505,9 @@
                     "type": "integer"
                 },
                 "pageSize": {
+                    "type": "integer"
+                },
+                "userId": {
                     "type": "integer"
                 }
             }

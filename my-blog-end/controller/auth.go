@@ -50,7 +50,7 @@ func (*Auth) Register(context *gin.Context) {
 	req := ReqUser{}
 	err := context.ShouldBindJSON(&req)
 	if err != nil {
-		slog.Error("Register参数格式有误")
+		slog.Error("/auth/register参数格式有误")
 		ReturnFail(context, nil, "参数格式有误")
 		return
 	}
@@ -99,7 +99,7 @@ func (*Auth) Login(context *gin.Context) {
 	req := ReqUser{}
 	err := context.ShouldBindJSON(&req)
 	if err != nil {
-		slog.Error("Login参数格式有误")
+		slog.Error("/auth/login参数格式有误")
 		ReturnFail(context, nil, "参数格式有误")
 		return
 	}
@@ -157,7 +157,7 @@ func (*Auth) Info(context *gin.Context) {
 }
 
 // @Summary 统计
-// @Description 用户的统计信息
+// @Description 当前用户的统计信息
 // @Tags auth
 // @Success 200 {object} StatVo
 // @Router /auth/getStats [get]

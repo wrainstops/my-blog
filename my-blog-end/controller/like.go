@@ -3,10 +3,11 @@ package controller
 import (
 	"errors"
 	"fmt"
-	"gorm.io/gorm"
 	"log/slog"
 	"my_blog_back/common"
 	"my_blog_back/model"
+
+	"gorm.io/gorm"
 
 	"github.com/gin-gonic/gin"
 )
@@ -29,7 +30,7 @@ func (*Like) Add(context *gin.Context) {
 	addLike := ReqLike{}
 	err := context.ShouldBindJSON(&addLike)
 	if err != nil {
-		slog.Error("Add参数格式有误")
+		slog.Error("/like/add参数格式有误")
 		ReturnFail(context, nil, "参数格式有误")
 		return
 	}
@@ -96,7 +97,7 @@ func (*Like) Cancel(context *gin.Context) {
 	cancelLike := ReqLike{}
 	err := context.ShouldBindJSON(&cancelLike)
 	if err != nil {
-		slog.Error("Cancel参数格式有误")
+		slog.Error("/like/cancel参数格式有误")
 		ReturnFail(context, nil, "参数格式有误")
 		return
 	}

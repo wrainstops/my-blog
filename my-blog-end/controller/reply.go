@@ -88,7 +88,7 @@ func (*Reply) Add(context *gin.Context) {
 	req := ReqReply{}
 	err := context.ShouldBindJSON(&req)
 	if err != nil {
-		slog.Error("Add参数格式有误")
+		slog.Error("/reply/add参数格式有误")
 		ReturnFail(context, nil, "参数格式有误")
 		return
 	}
@@ -140,7 +140,7 @@ func (*Reply) Query(context *gin.Context) {
 	query := QueryReplyBody{}
 	err := context.ShouldBindJSON(&query)
 	if err != nil {
-		slog.Error("parentId空")
+		slog.Error("/common/reply/queryparentId空")
 		ReturnFail(context, nil, "parentId空")
 		return
 	}
@@ -179,6 +179,8 @@ func (*Reply) GetMyReply(context *gin.Context) {
 	query := PageParams{}
 	err := context.ShouldBindJSON(&query)
 	if err != nil {
+		slog.Error("/reply/getMyReply参数格式有误")
+		ReturnFail(context, nil, "参数格式有误")
 		return
 	}
 
